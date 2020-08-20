@@ -42,9 +42,7 @@ void MPI_Abort ( MPI_Comm comm, int error_code )
     Input, int MPI_Abort, the error code to be returned.
 */
 {
-  printf ( "\n" );
-  printf ( "MPI_ABORT:\n" );
-  printf ( "  Shut down with error code = %d\n", error_code );
+  fprintf (stderr, "\nMPI_ABORT: Shut down with error code = %d\n", error_code );
 
   exit ( error_code );
 }
