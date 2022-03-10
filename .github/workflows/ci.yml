@@ -1,0 +1,51 @@
+name: ci
+
+env:
+  CTEST_PARALLEL_LEVEL: 3
+  CMAKE_BUILD_TYPE: Release
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
+
+on:
+  push:
+    paths:
+      - "**.c"
+      - "**.cpp"
+      - "**.f90"
+      - "**/CMakeLists.txt"
+      - "**.cmake"
+      - ".github/workflows/ci.yml"
+
+jobs:
+
+  cmake:
+    strategy:
+      matrix:
+        shared: [true, false]
+        img: [
+          {os: ubuntu-latest, fc: gfortran, gen: Unix Makefiles},
+          {os: macos-latest, fc: gfortran-11, gen: Unix Makefiles},
+          {os: windows-latest, fc: gfortran, gen: MinGW Makefiles},
+
+        ]
+
+    runs-on: ${{ matrix.img.os }}
+    env:
+      CMAKE_GENERATOR: ${{ matrix.img.gen }}
+      FC: ${{ matrix.img.fc }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Config library
+      run: cmake -B build -DMPI1:BOOL=on --install-prefix=${{ runner.temp }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }}
+    - name: build library
+      run: cmake --build build --parallel
+    - name: install library
+      run: cmake --install build
+
+    - name: Config examples
+      run: cmake -S examples -B examples/build -DCMAKE_PREFIX_PATH=${{ runner.temp }}
+    - name: build examples
+      run: cmake --build examples/build --parallel
+    - name: test examples
+      run: ctest --test-dir examples/build -V

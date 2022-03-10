@@ -1,38 +1,74 @@
 cmake_minimum_required(VERSION 3.14...3.23)
 
-project(MPI_stubs
-LANGUAGES C CXX Fortran
+project(mpi_stub
+LANGUAGES C CXX
 VERSION 1.0.0
 HOMEPAGE_URL http://people.math.sc.edu/Burkardt)
 
-include(CTest)
+option(fortran "Build MPI::MPI_Fortran" ON)
+
+if(fortran)
+  enable_language(Fortran)
+endif()
 
 add_compile_options(
 $<$<AND:$<CONFIG:Release>,$<COMPILE_LANG_AND_ID:Fortran,GNU>>:-fno-backtrace>
 )
 
 # --- C, C++
-add_library(mpi_c src/c/mpi.c)
+add_library(mpi_c src/mpi.c)
 target_include_directories(mpi_c PUBLIC
-$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/c>
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
 $<INSTALL_INTERFACE:include>
 )
+set_target_properties(mpi_c PROPERTIES
+EXPORT_NAME MPI_C
+)
+
+add_library(mpi_cxx src/mpi.c)
+target_include_directories(mpi_cxx INTERFACE
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+$<INSTALL_INTERFACE:include>
+)
+set_target_properties(mpi_cxx PROPERTIES
+EXPORT_NAME MPI_CXX
+)
+
 # for FetchContent of this library
 add_library(MPI::MPI_C INTERFACE IMPORTED GLOBAL)
 target_link_libraries(MPI::MPI_C INTERFACE mpi_c)
 
 add_library(MPI::MPI_CXX INTERFACE IMPORTED GLOBAL)
-target_link_libraries(MPI::MPI_CXX INTERFACE mpi_c)
+target_link_libraries(MPI::MPI_CXX INTERFACE mpi_cxx)
 
 # --- Fortran
-add_library(mpi_f src/fortran/mpi_stubs.f90 src/fortran/mpi_types.f90
-src/fortran/reduce.f90)
-set_target_properties(mpi_f PROPERTIES Fortran_MODULE_DIRECTORY ${PROJECT_BINARY_DIR}/include)
-target_include_directories(mpi_f INTERFACE ${PROJECT_BINARY_DIR}/include)
-# for FetchContent of this library
-add_library(MPI::MPI_Fortran INTERFACE IMPORTED GLOBAL)
-target_link_libraries(MPI::MPI_Fortran INTERFACE mpi_f)
+if(fortran)
+  add_library(mpi_fortran src/mpi_stubs.f90 src/mpi_types.f90 src/reduce.f90)
+  set_target_properties(mpi_fortran PROPERTIES
+  Fortran_MODULE_DIRECTORY ${PROJECT_BINARY_DIR}/include
+  EXPORT_NAME MPI_Fortran
+  )
+  target_include_directories(mpi_fortran PUBLIC
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+  )
+  # for FetchContent of this library
+  add_library(MPI::MPI_Fortran INTERFACE IMPORTED GLOBAL)
+  target_link_libraries(MPI::MPI_Fortran INTERFACE mpi_fortran)
 
-if(BUILD_TESTING)
-  add_subdirectory(examples)
+  install(TARGETS mpi_fortran
+  EXPORT ${PROJECT_NAME}-targets
+  )
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/mpi.mod
+  TYPE INCLUDE
+  )
 endif()
+
+install(TARGETS mpi_c mpi_cxx
+EXPORT ${PROJECT_NAME}-targets
+)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/mpi.h
+TYPE INCLUDE
+)
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/install.cmake)
