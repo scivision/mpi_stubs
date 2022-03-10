@@ -38,3 +38,16 @@ get_property(_test_names DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY TESTS)
 set_tests_properties(${_test_names} PROPERTIES
 TIMEOUT 10
 )
+
+if(WIN32 AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.22)
+get_target_property(libdir MPI::MPI_C IMPORTED_LOCATION_RELEASE)
+  if(libdir)
+    cmake_path(GET libdir PARENT_PATH dlldir)
+    message(STATUS "DLL ${dlldir}")
+    if(IS_DIRECTORY ${dlldir})
+      set_tests_properties(${_test_names} PROPERTIES
+      ENVIRONMENT_MODIFICATION PATH=path_list_append:${dlldir}
+      )
+    endif()
+  endif()
+endif()
