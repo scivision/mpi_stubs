@@ -1,3 +1,6 @@
+#ifndef MPI_H
+#define MPI_H
+
 # define MPI_COMM_WORLD 0
 
 # define MPI_FAILURE 1
@@ -26,6 +29,10 @@
 # define MPI_MAX 2
 # define MPI_MIN 3
 # define MPI_PRODUCT 4
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void MPI_Abort ( MPI_Comm comm, int ierror );
 int MPI_Allgather ( void *sendbuf, int sendcount, MPI_Datatype sendtype,
@@ -85,3 +92,9 @@ int MPI_Waitany ( int count, MPI_Request *request, int *index,
   MPI_Status *status );
 double MPI_Wtick ( void );
 double MPI_Wtime ( void );
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* MPI_H */

@@ -2,7 +2,7 @@
 # include <stdio.h>
 # include <time.h>
 
-# include "mpi_stubs_c.h"
+# include "mpi.h"
 
 /******************************************************************************/
 
