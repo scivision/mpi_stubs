@@ -7,6 +7,10 @@ HOMEPAGE_URL http://people.math.sc.edu/Burkardt)
 
 include(CTest)
 
+add_compile_options(
+$<$<AND:$<CONFIG:Release>,$<COMPILE_LANG_AND_ID:Fortran,GNU>>:-fno-backtrace>
+)
+
 # --- C, C++
 add_library(mpi_c src/c/mpi.c)
 target_include_directories(mpi_c PUBLIC
