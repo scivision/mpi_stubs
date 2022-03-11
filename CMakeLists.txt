@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14...3.23)
 
 project(mpi_stub
 LANGUAGES C CXX
-VERSION 1.0.0
+VERSION 1.0.1
 HOMEPAGE_URL http://people.math.sc.edu/Burkardt)
 
 option(fortran "Build MPI::MPI_Fortran" ON)
@@ -11,9 +11,8 @@ if(fortran)
   enable_language(Fortran)
 endif()
 
-add_compile_options(
-$<$<AND:$<CONFIG:Release>,$<COMPILE_LANG_AND_ID:Fortran,GNU>>:-fno-backtrace>
-)
+include(cmake/options.cmake)
+include(cmake/compilers.cmake)
 
 # --- C, C++
 add_library(mpi_c src/mpi.c)
