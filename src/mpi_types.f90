@@ -1,6 +1,6 @@
 module mpi_types
 
-implicit none
+implicit none (type, external)
 
 integer, parameter ::  mpi_comm_world = 0
 !

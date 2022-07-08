@@ -5,12 +5,12 @@ set(namespace MPI)
 include(CMakePackageConfigHelpers)
 
 configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/config.cmake.in
-${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}-config.cmake
+${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}Config.cmake
 INSTALL_DESTINATION cmake
 )
 
 write_basic_package_version_file(
-${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}-config-version.cmake
+${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}ConfigVersion.cmake
 COMPATIBILITY SameMinorVersion
 )
 
@@ -20,8 +20,8 @@ DESTINATION cmake
 )
 
 install(FILES
-${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}-config.cmake
-${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}-config-version.cmake
+${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}Config.cmake
+${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}ConfigVersion.cmake
 DESTINATION cmake
 )
 
@@ -29,9 +29,8 @@ DESTINATION cmake
 
 set(CPACK_GENERATOR TZST)
 set(CPACK_SOURCE_GENERATOR TZST)
-set(CPACK_PACKAGE_VENDOR "SciVision")
+set(CPACK_PACKAGE_VENDOR "Michael Hirsch")
 set(CPACK_PACKAGE_CONTACT "Michael Hirsch")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS)
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_OUTPUT_FILE_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/package")

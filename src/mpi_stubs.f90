@@ -5,7 +5,7 @@ use, intrinsic :: iso_fortran_env, only : stderr=>error_unit, real64
 use mpi_types
 use reduce, only : mpi_reduce_scatter, mpi_reduce, mpi_allreduce
 
-implicit none
+implicit none (type, external)
 public
 
 contains
